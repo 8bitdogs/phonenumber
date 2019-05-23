@@ -28,7 +28,7 @@ func Parse(number string) (PhoneNumber, error) {
 	var result PhoneNumber
 	switch len(number) {
 	case 11, 12:
-		code, err := strconv.ParseUint(number[0:len(number)-9], 10, 16)
+		code, err := strconv.ParseUint(number[0:len(number)-10], 10, 16)
 		if err != nil {
 			return zeroNumber, err
 		}
@@ -36,13 +36,7 @@ func Parse(number string) (PhoneNumber, error) {
 		fallthrough
 	case 10:
 		// parse domestic operator
-		var code uint64
-		var err error
-		if result.CountyCode > 0 {
-			code, err = strconv.ParseUint(number[len(number)-9:len(number)-7], 10, 16)
-		} else {
-			code, err = strconv.ParseUint(number[len(number)-10:len(number)-7], 10, 16)
-		}
+		code, err := strconv.ParseUint(number[len(number)-10:len(number)-7], 10, 16)
 		if err != nil {
 			return zeroNumber, err
 		}

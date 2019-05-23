@@ -17,8 +17,8 @@ func TestParse(t *testing.T) {
 	}{
 		{name: "Local", args: args{"754-3010"}, want: PhoneNumber{Local: [4]byte{7, 54, 30, 10}}},
 		{name: "Domestic", args: args{"(541) 754-3010"}, want: PhoneNumber{OperatorCode: 541, Local: [4]byte{7, 54, 30, 10}}},
-		{name: "International", args: args{"+1-541-754-3010"}, want: PhoneNumber{CountyCode: 15, OperatorCode: 41, Local: [4]byte{7, 54, 30, 10}}},
-		{name: "Dialed in the US", args: args{"1-541-754-3010"}, want: PhoneNumber{CountyCode: 15, OperatorCode: 41, Local: [4]byte{7, 54, 30, 10}}},
+		{name: "International", args: args{"+1-541-754-3010"}, want: PhoneNumber{CountyCode: 1, OperatorCode: 541, Local: [4]byte{7, 54, 30, 10}}},
+		{name: "Dialed in the US", args: args{"1-541-754-3010"}, want: PhoneNumber{CountyCode: 1, OperatorCode: 541, Local: [4]byte{7, 54, 30, 10}}},
 		{name: "Invalid input", args: args{"fooNumber"}, wantErr: true},
 	}
 	for _, tt := range tests {
