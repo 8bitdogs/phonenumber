@@ -17,6 +17,20 @@ type PhoneNumber struct {
 	Local        [4]byte
 }
 
+func (p PhoneNumber) String() string {
+	var result bytes.Buffer
+	result.WriteByte('+')
+	result.WriteString(strconv.Itoa(int(p.CountyCode)))
+	result.WriteString(strconv.Itoa(int(p.OperatorCode)))
+	for _, l := range p.Local {
+		if l < 10 {
+			result.WriteByte('0')
+		}
+		result.WriteByte(l)
+	}
+	return result.String()
+}
+
 func Parse(number string) (PhoneNumber, error) {
 	buffer := bytes.NewBuffer([]byte{})
 	for i := 0; i < len(number); i++ {
@@ -44,42 +58,16 @@ func Parse(number string) (PhoneNumber, error) {
 		fallthrough
 	case 7:
 		// parse local part
-		loc, err := local(number[len(number)-7 : len(number)])
-		if err != nil {
-			return zeroNumber, err
+		n := number[len(number)-7 : len(number)]
+		index := uint8(3)
+		const zeroByte = '0'
+		for i := len(n) - 1; i > 1; i -= 2 {
+			result.Local[index] = (n[i-1]-zeroByte)*10 + n[i] - zeroByte
+			index--
 		}
-		result.Local = loc
+		result.Local[index] = n[0] - zeroByte
 		return result, nil
 	default:
 		return zeroNumber, ErrUnsupportableFormat
 	}
-}
-
-func local(n string) ([4]byte, error) {
-	var result [4]byte
-	var b byte
-	var ok bool
-	index := uint8(3)
-	for i := len(n) - 1; i > 1; i -= 2 {
-		b, ok = tobyte(n[i-1], n[i])
-		if !ok {
-			return result, ErrInvalidCharactersInPhoneNumber
-		}
-		result[index] = b
-		index--
-	}
-	b, ok = tobyte('0', n[0])
-	if !ok {
-		return result, ErrInvalidCharactersInPhoneNumber
-	}
-	result[index] = b
-	return result, nil
-}
-
-func tobyte(b1, b2 byte) (byte, bool) {
-	const algin = '0'
-	if b1 < '0' || b1 > '9' || b2 < '0' || b2 > '9' {
-		return 0, false
-	}
-	return (b1-algin)*10 + b2 - algin, true
 }

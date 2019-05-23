@@ -5,6 +5,16 @@ import (
 	"testing"
 )
 
+func TestPhoneNumberString(t *testing.T) {
+	ph, err := Parse("+1-541-754-0301")
+	if err != nil {
+		t.Error("failed to parse.", err)
+	}
+	if ph.String() != "+15417540301" {
+		t.Fail()
+	}
+}
+
 func TestParse(t *testing.T) {
 	type args struct {
 		number string
